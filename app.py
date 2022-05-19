@@ -43,11 +43,11 @@ def uploadfile():
     if request.method == 'POST': # check if the method is post
         files = request.files.getlist('files') # get the file from the files object
         # print(files)
+        os.makedirs(f"./uploads/{case_id}")
     for f in files:
         print(f.filename)
         # Saving the file in the required destination
         if check_file_extension(f.filename):
-            os.makedirs(f"./uploads/{case_id}")
             f.save(os.path.join(f"./uploads/{case_id}", secure_filename(f.filename))) # this will secure the file
     return 'file uploaded successfully' # Display thsi message after uploading
 		

@@ -17,13 +17,13 @@ app = Flask(__name__)
 # vars
 # Creating the upload folder
 upload_folder = "uploads/"
-
+# creating the upload folder if not exists
+if not os.path.exists(upload_folder):
+   os.mkdir(upload_folder)
 # delete uploads content on start
 for f in os.listdir(upload_folder):
     shutil.rmtree(os.path.join(upload_folder, f))
 
-if not os.path.exists(upload_folder):
-   os.mkdir(upload_folder)
 
 # Configuring the upload folder
 app.config['UPLOAD_FOLDER'] = upload_folder

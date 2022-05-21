@@ -257,7 +257,7 @@ def predict(patient_id):
     df_uni = pd.DataFrame({"BraTS21ID":[patient_id], "MGMT_value":[0.5]})
 
     print("DATAFRAME",df_uni)
-    df_uni_ds = BrainRSNADataset(data=df_uni, mri_type="FLAIR",ds_type="val" , is_train= False)
+    df_uni_ds = BrainRSNADataset(data=df_uni, mri_type="T2w",ds_type="val" , is_train= False)
 
     df_uni_dl =  torch.utils.data.DataLoader(
         df_uni_ds,

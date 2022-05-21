@@ -41,20 +41,20 @@ def upload_file():
 @app.route('/upload', methods = ['GET', 'POST'])
 def uploadfile():
     global _id
-    global case_id
-    case_id = str(_id).zfill(5)
+    global patient_id
+    patient_id = str(_id).zfill(5)
     _id = _id+1
 
     if request.method == 'POST': # check if the method is post
         files = request.files.getlist('files') # get the file from the files object
         # print(files)
-        os.makedirs(f"./uploads/{case_id}")
+        os.makedirs(f"./uploads/{patient_id}")
     for f in files:
         print(f.filename)
         # Saving the file in the required destination
         if check_file_extension(f.filename):
-            f.save(os.path.join(f"./uploads/{case_id}", secure_filename(f.filename))) # this will secure the file
-    predict(case_id)
+            f.save(os.path.join(f"./uploads/{patient_id}", secure_filename(f.filename))) # this will secure the file
+    predict(patient_id)
     return 'file uploaded successfully' # Display this message after uploading
 		
 

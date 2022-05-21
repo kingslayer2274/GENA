@@ -29,13 +29,13 @@ import monai
 
 def predict(patient_id):
     NUM_IMAGES_3D = 64
-    TRAINING_BATCH_SIZE = 16
-    TEST_BATCH_SIZE = 16
+    #TRAINING_BATCH_SIZE = 16
+    #TEST_BATCH_SIZE = 16
     IMAGE_SIZE = 224
-    N_EPOCHS = 40
-    do_valid = True
+    #N_EPOCHS = 40
+    #do_valid = True
     n_workers = 1
-    patient_id = 00000
+    patient_id = patient_id
 
 # mkdir indices
 
@@ -147,7 +147,9 @@ def predict(patient_id):
             self.target = target
             self.data = data
             self.type = mri_type
-
+           
+            global patient_id
+           
             self.transform = transform
             self.is_train = is_train
             self.folder = "train" if self.is_train else "test"
@@ -179,29 +181,31 @@ def predict(patient_id):
             
             
             big_image_indexes = {}
-            if (f"big_image_indexes_{patient_id}.pkl" in os.listdir("indices/"))\
-                and (self.do_load) :
-                print("Loading the best images indexes for all the cases...")
-                big_image_indexes = joblib.load(f"indices/big_image_indexes_{patient_id}.pkl")
-                return big_image_indexes
-            else:
-                
-                print("Caulculating the best scans for every case...")
-                for row in tqdm(self.data.iterrows(), total=len(self.data)):
-                    case_id = str(int(row[1].BraTS21ID)).zfill(5)
-                    path = f"uploads/{patient_id}/*.dcm"
-                    files = sorted(
-                        glob.glob(path),
-                        key=lambda var: [
-                            int(x) if x.isdigit() else x for x in re.findall(r"[^0-9]|[0-9]+", var)
-                        ],
-                    )
-                    resolutions = [extract_cropped_image_size(f) for f in files]
-                    middle = np.array(resolutions).argmax()
-                    big_image_indexes[case_id] = middle
+            
+            # if (f"big_image_indexes_{case_id}.pkl" in os.listdir("indices/"))\
+            #     and (self.do_load) :
+            #     print("Loading the best images indexes for all the cases...")
+            #     big_image_indexes = joblib.load(f"indices/big_image_indexes_{case_id}.pkl")
+            #     return big_image_indexes
+            # else:
+            print("Caulculating the best scans for every case...")
+            for row in tqdm(self.data.iterrows(), total=1):
+                print("ITTER : " , self.data.iterrows())
+                case_id = str(int(row[1].BraTS21ID)).zfill(5)
+                print("CURRENT",case_id)
+                path = f"uploads/{case_id}/*.dcm"
+                files = sorted(
+                    glob.glob(path),
+                    key=lambda var: [
+                        int(x) if x.isdigit() else x for x in re.findall(r"[^0-9]|[0-9]+", var)
+                    ],
+                )
+                resolutions = [extract_cropped_image_size(f) for f in files]
+                middle = np.array(resolutions).argmax()
+                big_image_indexes[case_id] = middle
 
-                joblib.dump(big_image_indexes, f"indices/big_image_indexes_{patient_id}.pkl")
-                return big_image_indexes
+           # joblib.dump(big_image_indexes, f"indices/big_image_indexes_{case_id}.pkl")
+            return big_image_indexes
 
 
         
@@ -221,7 +225,7 @@ def predict(patient_id):
                     int(x) if x.isdigit() else x for x in re.findall(r"[^0-9]|[0-9]+", var)
                 ],
             )
-
+            
         
             middle = self.img_indexes[case_id]   # largest resolution index of cropped dicom files  (largest cropped dicom)
 
@@ -245,14 +249,14 @@ def predict(patient_id):
     model.class_layers.out = nn.Linear(1024 , 1)
 
     model = nn.DataParallel(model)
-    model.load_state_dict(torch.load("./0.6303030303030303_acc_model_resnet50 DataParallel_best_metric_model.pth"))
+    model.load_state_dict(torch.load("./0.6303030303030303_acc_model_resnet50 DataParallel_best_metric_model.pth")) # dense
 
 
 
 
     df_uni = pd.DataFrame({"BraTS21ID":[patient_id], "MGMT_value":[0.5]})
 
-
+    print("DATAFRAME",df_uni)
     df_uni_ds = BrainRSNADataset(data=df_uni, mri_type="FLAIR",ds_type="val" , is_train= False)
 
     df_uni_dl =  torch.utils.data.DataLoader(

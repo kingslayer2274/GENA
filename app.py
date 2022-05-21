@@ -3,11 +3,11 @@ import os
 from flask import Flask, render_template, request
 from jinja2 import Undefined
 from werkzeug.utils import secure_filename
+import shutil
 
 
 # TODO: import the model from model.py
-# from model import * 
-# pass data to the model
+from model import * 
 
 #  vars
 _id = 0
@@ -17,6 +17,11 @@ app = Flask(__name__)
 # vars
 # Creating the upload folder
 upload_folder = "uploads/"
+
+# delete uploads content on start
+for f in os.listdir(upload_folder):
+    shutil.rmtree(os.path.join(upload_folder, f))
+
 if not os.path.exists(upload_folder):
    os.mkdir(upload_folder)
 
@@ -49,8 +54,9 @@ def uploadfile():
         # Saving the file in the required destination
         if check_file_extension(f.filename):
             f.save(os.path.join(f"./uploads/{case_id}", secure_filename(f.filename))) # this will secure the file
-    return 'file uploaded successfully' # Display thsi message after uploading
+    predict(case_id)
+    return 'file uploaded successfully' # Display this message after uploading
 		
 
 if __name__ == '__main__':
-    app.run() # running the flask app
+    app.run(debug=True) # running the flask app

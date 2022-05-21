@@ -36,9 +36,9 @@ def check_file_extension(filename):
 # The path for uploading the file
 @app.route('/')
 def upload_file():
-   return render_template('upload.html')
+   return render_template('model.html')
 
-@app.route('/upload', methods = ['GET', 'POST'])
+@app.route('/model', methods = ['GET', 'POST'])
 def uploadfile():
     global _id
     global patient_id
@@ -54,8 +54,14 @@ def uploadfile():
         # Saving the file in the required destination
         if check_file_extension(f.filename):
             f.save(os.path.join(f"./uploads/{patient_id}", secure_filename(f.filename))) # this will secure the file
-    predict(patient_id)
-    return 'file uploaded successfully' # Display this message after uploading
+    # pass patient_id to model
+    result = predict(patient_id)[0]
+    if result == 0:
+        result = "Negative"
+    else:
+        result = "Positive"
+
+    return render_template('result.html', result=result)
 		
 
 if __name__ == '__main__':

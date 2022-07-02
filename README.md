@@ -26,7 +26,7 @@ the structure of MRI Scans was like this :
 
 ![Screenshot 2022-07-02 222658](https://user-images.githubusercontent.com/57845488/177015289-c2e18eb0-a154-4fb7-9ad3-96a929e4555d.png)
 
-the data has 585 patient each patient has 4 kind of scans **["FLAIR" , "T1w" , "T1wCE" , "T2w"]**
+the data has **585** patient each patient has 4 kind of scans **["FLAIR" , "T1w" , "T1wCE" , "T2w"]**
 
 ## Central image trick:
 Each independent case has a different number of images for all the MRI scans. Using all the scans will confuse the model to learn the spatial dependence of the brain pixels.

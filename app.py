@@ -1,12 +1,9 @@
 # importing the required libraries
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 from jinja2 import Undefined
 from werkzeug.utils import secure_filename
 import shutil
-
-
-# TODO: import the model from model.py
 from model import * 
 
 #  vars
